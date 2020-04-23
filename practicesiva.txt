@@ -1,0 +1,18 @@
+cloudxlab credentials
+
+username:rockingsiva9774201
+password:1G7V0I48
+
+mysql credentials
+
+hostname:cxln2.c.thelab-240901.internal
+username:sqoopuser
+password:NHkkP876rp
+
+important links:
+https://github.com/cloudxlab/bigdata/blob/master/spark/python/pyspark_dataframe_problems.ipynb
+https://github.com/cloudxlab/bigdata/tree/master/spark/examples/python
+
+
+-----------------------HDFS commands -----------------------
+1.

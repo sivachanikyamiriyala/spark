@@ -1,0 +1,294 @@
+------------------------------practice with call data ---------------------------------
+
+from pyspark.sql import SparkSession
+sparkdriver=SparkSession.builder.master('local').appName('calldata').getOrCreate()
+sparkdriver
+df_call_data=sparkdriver.read.format('csv').option('delimiter',',').option('inferSchema',True).option('header',True).load('/home/spark/Call_Data.csv')
+df_call_data.printSchema()
+
+root
+ |-- YR_MO: integer (nullable = true)
+ |-- CALL_DATE: timestamp (nullable = true)
+ |-- AGENT_KEY: integer (nullable = true)
+ |-- CALLS: integer (nullable = true)
+ |-- HANDLE_TIME: integer (nullable = true)
+ |-- CALL_REGEN: integer (nullable = true)
+ |-- CALLS_WITH_OFFER: integer (nullable = true)
+ |-- CALLS_WITH_ACCEPT: integer (nullable = true)
+ |-- CALLS_OFFER_APPLIED: integer (nullable = true)
+ |-- TRANSFERS: integer (nullable = true)
+
+
+df_call_data.show(2)
+print(sparkdriver.sparkContext.defaultParallelism)
+print(sparkdriver.sparkContext.uiWebUrl)
+
+df=df_call_data.alias("df")
+df.count()
+df_call_data.count()
+
+df.createOrReplaceTempView("calldata")
+
+sparkdriver.sql("select * from calldata").count()
+
+sparkdriver.sql("select CALL_DATE,CALLS from calldata").show(5)
+df.select("CALL_DATE","CALLS").show(5)
+
+sparkdriver.sql("select CALL_DATE,CALLS,AGENT_KEY from calldata where AGENT_KEY =12465").show()
+df.select("CALL_DATE","CALLS","AGENT_KEY").where("AGENT_KEY =12465").show() 
+
+sparkdriver.sql("select CALL_DATE,CALLS,AGENT_KEY from calldata where AGENT_KEY =12465 and CALLS=37").show()
+df.select("CALL_DATE","CALLS","AGENT_KEY").where("AGENT_KEY =12465 and CALLS=37").show() 
+
+df.summary().show()
+df.count()
+df.printSchema()
+df.describe().show()
+
+
+sparkdriver.sql("select CALL_DATE,count(*) from calldata group by CALL_DATE").show()
+df.groupBy("CALL_DATE").count().show()
+
+sparkdriver.sql("select CALL_DATE,split(CALL_DATE,' ') from calldata ").show(2)
+df.groupBy(df.CALL_DATE.substr(1,1)).count().show(2)
+
+from pyspark.sql import functions 
+from pyspark.sql.functions import count,min,max 
+
+sparkdriver.sql("select CALL_DATE,count(*),min(CALL_DATE),max(CALL_DATE) from calldata group by CALL_DATE").show()
+df.groupBy("CALL_DATE").agg(count("CALL_DATE"),min("CALL_DATE"),max("CALL_DATE")).show()
+
+
+df.createGlobalTempView("sample")
+
+sparkdriver.sql("select * from global_temp.sample").count()
+spark1=sparkdriver.newSession()
+spark1.sql("select * from global_temp.sample").count()
+
+df.limit(10).show()
+
+df1=sparkdriver.sql("select * from calldata where AGENT_KEY%2==0")
+df2=df.where("AGENT_KEY%2==1")
+
+df.count()
+df1.count()
+df2.count()
+
+df1.printSchema()
+df2.printSchema()
+
+df.columns
+
+
+df_join=df1.join(df2,df1.CALLS==df2.CALLS,'inner')
+df_join.count()
+df_join.printSchema()
+df_join.show(1)
+
+df_join=df1.join(df2,df1.CALLS==df2.CALLS,'left_outer')
+df_join.count()
+
+df_join=df1.join(df2,df1.CALLS==df2.CALLS,'right_outer')
+df_join.count()
+
+df_join=df1.join(df2,df1.CALLS==df2.CALLS,'full_outer')
+df_join.count()
+
+df1.select(df1.CALLS_OFFER_APPLIED,df1.CALLS).join(df2.select(df2.CALL_DATE,df2.CALLS),df1.CALLS==df2.CALLS,'inner').show()
+
+df.cube("CALL_REGEN","CALLS_OFFER_APPLIED").count().show()
+
+df.cube("CALL_REGEN","CALLS_OFFER_APPLIED").count().na.fill(999).show()
+
+df.cube("CALL_REGEN","CALLS_OFFER_APPLIED").count().na.fill("999").show()
+
+df.cube("CALL_REGEN","CALLS_OFFER_APPLIED").count().na.replace(7,99,'CALL_REGEN').show()
+
+df.cube("CALL_REGEN","CALLS_OFFER_APPLIED").count().na.replace(7,None,'CALL_REGEN').show()
+
+df.cube("CALL_REGEN","CALLS_OFFER_APPLIED").count().na.drop().show()
+
+df.rollup("CALL_REGEN","CALLS_OFFER_APPLIED").count().na.drop().show()
+
+df.orderBy(desc("AGENT_KEY")).show()
+
+df.orderBy(asc("AGENT_KEY")).show()
+
+df.orderBy(("AGENT_KEY")).show()
+
+df.selectExpr("CALLS as call").show(1)
+
+df.withColumn("siva",df.CALLS*100).show()
+
+df.withColumn("siva",df.CALLS*100).show()
+
+df.withColumnRenamed("CALLS","SS").show()
+
+sparkdriver.sql("show functions").count()
+sparkdriver.sql("show databases").count()
+
+sparkdriver.sql("describe function trim").collect()
+
+sparkdriver.sql("show tables").show()
+
+--------------------------------cloudx lab ----------
+username: rockingsiva9774201
+password: 1G7V0I48
+
+sql username: sqoopuser
+password: NHkkP876rp
+hostname: mysql -h cxln2.c.thelab-240901.internal -u sqoopuser -pNHkkP876rp 
+
+
+
+from pyspark.sql import SparkSession
+sparkdriver=SparkSession.builder.master('local').appName('demo').getOrCreate()
+df_call_data=sparkdriver.read.format('csv').option('header',True).option('inferSchema',True).option('delimiter',',').load('file:///home/rockingsiva9774201/calldata')
+df_call_data.printSchema()
+df_call_data.show(10)
+
+---------RESTAPI-------------
+>>> import json
+>>> import time
+>>> import logging
+>>> import os
+>>> import sys
+>>> import requests
+>>> import datetime
+
+import json
+jsonapidata=requests.request('GET','https://api.github.com/users/hadley/orgs')
+jsondata=jsonapidata.json()
+#print(jsondata)
+file=open('/home/rockingsiva9774201/jsondata1','a')
+for record in jsondata:
+    file.write("%s\n" %record)
+  
+
+df_json=sparkdriver.read.format('json').load('file:///home/rockingsiva9774201/jsondata1')
+df_json.printSchema()
+df_json.count()
+df_json.columns 
+
+from pyspark.sql import SparkSession,HiveContext 
+sparkdriver=SparkSession.builder.master('local').appName('sql').config('spark.jars.packages','mysql:mysql-connector-java:6.0.4').getOrCreate()
+sparkdriver
+
+SparkContext was mainly used in Spark 1.x but Spark 2.x, the initialization is done by the way of SparkSession.
+
+Instance of SparkContext sc was the main entry point in Spark 1.x shell. In the Spark 2.x shell, the main entry point is “spark” an object of SparkSession. Please note that spark.sparkContext in the newer version is available for backward compatibility and direct operations on RDD.
+
+import os
+import sys
+
+os.environ["SPARK_HOME"] = "/usr/hdp/current/spark2-client"
+os.environ["PYLIB"] = os.environ["SPARK_HOME"] + "/python/lib"
+# In below two lines, use /usr/bin/python2.7 if you want to use Python 2
+os.environ["PYSPARK_PYTHON"] = "/usr/local/anaconda/bin/python" 
+os.environ["PYSPARK_DRIVER_PYTHON"] = "/usr/local/anaconda/bin/python"
+sys.path.insert(0, os.environ["PYLIB"] +"/py4j-0.10.4-src.zip")
+sys.path.insert(0, os.environ["PYLIB"] +"/pyspark.zip")
+
+-----IMPORTANT copy the mysql-connector-java-5.1.36-bin.jar from hdfs location /data/spark/mysql-connector-java-5.1.36-bin.jar to local 
+
+from pyspark.sql import SparkSession,HiveContext 
+sparkdriver=SparkSession.builder.master('local').appName('sql').config('spark.jars','file:///home/rockingsiva9774201/mysql-connector-java-5.1.36-bin.jar').getOrCreate()
+
+sparkdriver
+
+df_mysql=sparkdriver.read.format('jdbc').option('url','jdbc:mysql://cxln2.c.thelab-240901.internal:3306').option('driver','com.mysql.jdbc.Driver').option('user','sqoopuser').option('password','NHkkP876rp').option('dbtable','sqoopex.users').load()
+
+df_mysql.show(1)
+
+df_mysql.count()
+
+df.write.format('json').mode('append').save('file:///home/rockingsiva9774201/mysqljsonout')
+
+df.write.format('csv').option('delimiter','\t').mode('append').save('file:///home/rockingsiva9774201/csvout1')
+
+df.write.format('json').option("header",False).option("inferSchema",False).mode('append').save('file:///home/rockingsiva9774201/csvout2')
+
+import time 
+import datetime 
+
+from pyspark.sql import functions
+from pyspark.sql.functions import *
+df_day1=df.withColumn("day",current_date())
+
+df_day1.write.format('jdbc').option('url','jdbc:mysql://cxln2.c.thelab-240901.internal:3306').option('driver','com.mysql.jdbc.Driver').option('user','sqoopuser').option('password','NHkkP876rp').option('dbtable','sqoopex.chanikya').save()
+
+
+df_day2=df.withColumn("day",date_add(current_date(),1))
+
+df_day2.show(1)
+
+df_day2.write.format('jdbc').option('url','jdbc:mysql://cxln2.c.thelab-240901.internal:3306').option('driver','com.mysql.jdbc.Driver').option('user','sqoopuser').option('password','NHkkP876rp').option('dbtable','sqoopex.chanikya').mode('append').save()
+
+mysql -h hostname -u sqoopuser -p 
+
+use sqoopex ;
+
+show tables ;
+
+select * from chanikya ;
+
+ <property>
+      <name>dfs.namenode.http-address</name>
+      <value>cxln1.c.thelab-240901.internal:50070</value>   namenode ipaddress(internal) : cxln1.c.thelab-240901.internal
+      <final>true</final>
+    </property>
+
+df.write.format('csv').option('header',True).mode('append').save('hdfs://cxln1.c.thelab-240901.internal:8020/user/rockingsiva9774201/csvoutput')
+
+from pyspark.sql import functions
+from pyspark.sql.functions import *
+from pyspark.sql import SparkSession,HiveContext 
+sparkdriver=SparkSession.builder.master('local').appName('sql').config('spark.jars','file:///home/rockingsiva9774201/mysql-connector-java-5.1.36-bin.jar').enableHiveSupport().config('spark.sql.warehouse.dir','hdfs://cxln1.c.thelab-240901.internal/user/rockingsiva9774201/warehouse').config('hive.metastore.uris','thrift://cxln2.c.thelab-240901.internal:9083').getOrCreate()
+df_mysql=sparkdriver.read.format('jdbc').option('url','jdbc:mysql://cxln2.c.thelab-240901.internal:3306').option('driver','com.mysql.jdbc.Driver').option('user','sqoopuser').option('password','NHkkP876rp').option('dbtable','sqoopex.users').load()
+df=df_mysql.alias("df")
+
+
+
+-------------------While loading the data from mysql to dataframe do it in jupyter notebook before loading in to dataframe first export path to python3 
+                        export PATH=/usr/local/anaconda/bin:$PATH
+
+
+Spark and Hive Integration 
+
+from pyspark.sql import SparkSession,HiveContext
+sparkdriver=SparkSession.builder.master('local').appName('demo').enableHiveSupport().getOrCreate()
+sparkdriver.sql("show databases").show()
+sparkdriver.sql("show tables in aaaa").show()
+
+
+
+---------------------AWS S3 INTEGRATION------------------------
+from pyspark import SparkConf,SparkContext,SQLContext
+conf=SparkConf()
+sc=SparkContext(conf=conf,master="local",appName="demo")
+
+sqlContext=SQLContext(sc)
+
+sc
+sc._jsc.hadoopConfiguration().set('fs.s3a.access.key','')
+sc._jsc.hadoopConfiguration().set('fs.s3a.secret.key','')
+
+df=sqlContext.read.format('json').load('s3a://miriyalamiriyala/json2')
+df.show()
+df.printSchema()
+df.write.format('json').save('s3a://miriyalamiriyala/jsonoutput')
+
+
+---------------------------------------------------------------------------------------------------------------
+from pyspark import SparkConf
+conf=SparkConf()
+
+from pyspark import SparkContext
+sc=SparkContext(conf=conf,appName='demo',master='local')
+
+from pyspark import SQLContext
+sqlContext=SQLContext(sc)
+
+
+
+

@@ -1,0 +1,130 @@
+sqoop list-databases --connect "jdbc:mysql://localhost:3306" --username root --password hadoop 
+
+sqoop list-tables --connect "jdbc:mysql://localhost:3306/kalyan" --username root --password hadoop 
+
+sqoopfile
+--connect
+"jdbc:mysql://localhost:3306/kalyan"
+--username
+root 
+--password 
+hadoop
+
+
+sqoop eval --options-file sqoopfile --query "select * from orders "
+
+sqoop import-all-tables --options-file sqoopfile --warehouse-dir /sqoop/import-all-tables/kalyan.db -m 1 --exclude-tables products,orders 
+   
+    hdfs dfs -ls /sqoop/import-all-tables/kalyan.db/ ;
+
+sqoop import --options-file sqoopfile --table orders -m 1 --as-textfile --target-dir /sqoop/import/kalyan.db/orders/m1 --fields-terminated-by '\t' --lines-terminated-by '\n' 
+
+sqoop import --options-file sqoopfile --table orders -m 1 --as-sequencefile --target-dir /sqoop/import/kalyan.db/orders/m1/se --fields-terminated-by '\t' --lines-terminated-by '\n' 
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/boundary/kalyan.db/orders/m1 --table orders --boundary-query "select 1,10000 from orders limit 1" --as-textfile --fields-terminated-by '\t' --lines-terminated-by '\n' -m 1 
+
+hdfs dfs -ls /sqoop/boundary/kalyan.db/orders/m1 
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/boundary/kalyan.db/orders/m1 --append --table orders --boundary-query "select 10001,20000 from orders limit 1" --as-textfile --fields-terminated-by '\t' --lines-terminated-by '\n' -m 2 --bindir bin_files --outdir java_files 
+
+hdfs dfs -ls /sqoop/boundary/kalyan.db/orders/m1 
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/boundary/kalyan.db/orders/m1 --append --table orders -m 2 --as-textfile --fields-terminated-by '\t' --lines-terminated-by '\n' 
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/query/kalyan.db/orders/m2 --num-mappers 2 --split-by order_status --query 'select * from orders where $CONDITIONS'
+
+ hdfs dfs -ls /sqoop/query/kalyan.db/orders/m2 
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/where/kalyan.db/orders/m2 --table orders --where "order_id<=1000" --num-mappers 2 --as-textfile --fields-terminated-by '\t' --lines-terminated-by '\n' 
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/where/kalyan.db/orders/m2 --append --incremental-append --table orders --check-column "order_id" --last-value 1000 --num-mappers 2 --as-textfile --fields-terminated-by '\t' --lines-terminated-by '\n' 
+
+mysql -u root -p
+
+show databases ;
+
+use kalyan ;
+
+show tables ;
+
+create table if not exists departments1 as select * from departments ; #CTAS (CREATE TABLE AS SELECT QUERY )
+create table if not exists departments2 like departments ;
+
+select * from departments;
+
+select * from departments1;
+
+select * from departments2;
+
+sqoop import --options-file sqoopfile --target-dir /sqoop/department/kalyan.db/departments --num-mappers 1 --table departments1 --fields-terminated-by '\t' --lines-terminated-by '\n' --as-textfile 
+
+hdfs dfs -ls /sqoop/department/kalyan.db/departments/
+
+sqoop export --options-file sqoopfile --table departments2 --export-dir /sqoop/department/kalyan.db/departments --num-mappers 1 --batch --input-fields-terminated-by '\t' --input-lines-terminated-by '\n' 
+
+sqoop eval --options-file sqoopfile --query "insert into departments2 values(8,'inserted')" 
+
+sqoop eval --options-file sqoopfile --query "update departments2 set department_name='updated' where department_id=7 "
+
+sqoop eval --options-file sqoopfile --query "select * from departments2"
+
+
+sqoop import --options-file sqoopfile --table departments2 --where "department_id>=7" --target-dir /sqoop/siva -m 1 --as-textfile --fields-terminated-by '\t' --lines-terminated-by '\n' 
+
+sqoop export --options-file sqoopfile --export-dir /sqoop/siva --table departments1 --batch -m 1 --update-key department_id --update-mode updateonly --input-fields-terminated-by '\t' --input-lines-terminated-by '\n'
+
+sqoop export --options-file sqoopfile --export-dir /sqoop/siva --table departments1 --batch -m 1 --update-key department_id --update-mode allowinsert --input-fields-terminated-by '\t' --input-lines-terminated-by '\n'
+
+sqoop import --options-file sqoopfile --hive-import --hive-overwrite --table departments1 -m 1 --hive-table kalyan.ssiva 
+
+
+
+-------------------------THEORY----------------------
+
+
+sqoop is one of the hadoop eco system tool used to import the data from rdbms to hdfs and export the data from hdfs to rdbms 
+
+sqoop=sql+hadoop
+
+fileds terminated by ,
+lines terminated by '\n' 
+
+storeda as --as-textfile 
+
+storage options
+--as-textfile (default)
+--as-sequencefile
+--as-avrodatafile
+--as=parquetfile 
+
+default no of mappers are 4 and no reducers 
+ no need of any aggregation operations 
+
+if the table is no thaving primary key 
+ then -m 1 or --num-mappers 1 
+   or 
+ split-by column
+ 
+
+use warehouse-dir if we are using import-all-tables 
+
+use target-dir if a particular table is importing 
+
+null-string ""
+null-non-string ""
+
+integrate with hive and hdfs 
+
+sqoop internallu having mysql database 
+ there it will maintian the state of the job 
+
+when using eval operation with query tag the tag shouldn't contain $CONDITIONS keyword 
+
+when using import operation with query tag the query tag must and should contain $CONDITIONS keyword 
+ $CONDITIONS value is default false it is an boolean value if the syntax is correct it will automaticallly turns to true and execute 
+   if syntax if false it will fail 
+
+default no of mappers are 4 
+
+
+
