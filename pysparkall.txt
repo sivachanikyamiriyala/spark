@@ -1,4 +1,4 @@
-------------------------------practice with call data ---------------------------------
+﻿------------------------------practice with call data ---------------------------------
 
 from pyspark.sql import SparkSession
 sparkdriver=SparkSession.builder.master('local').appName('calldata').getOrCreate()
@@ -291,4 +291,47 @@ sqlContext=SQLContext(sc)
 
 
 
+
+-----------------spark.sql.warehouse.dir and hive.metastore.uris
+
+from pyspark.sql import SparkSession,HiveContext
+spark=SparkSession.builder.master('local').appName('demo').config('spark.sql.warehouse.dir','hdfs://cxln1.c.thelab-240901.internal:8020/apps/hive/warehouse/sivachanikya9.db/').config('hive.metastore.uris','thrift://cxln2.c.thelab-240901.internal:9083').enableHiveSupport().getOrCreate()
+
+df_hive.write.format('csv').option('path','/apps/hive/warehouse/sivachanikya9.db/ordersdummy').saveAsTable("sivachanikya9.dummyorders1")
+
+
+
+spark web ui:
+http://e.cloudxlab.com:4047
+
+[rockingsiva9774201@cxln4 ~]$ export YARN_CONF_DIR=/etc/hadoop/conf/
+[rockingsiva9774201@cxln4 ~]$ export HADOOP_CONF_DIR=/etc/hadoop/conf/
+
+
+spark.sql("select movies.*,ratings.* from movies join ratings on movies.movieid=ratings.movieid").count()
+
+movies_ratings.count()
+
+movies_ratings.createOrReplaceTempView("movies_ratings")
+
+spark.sql("describe movies_ratings").show()
+
+spark.sql("select title,count(userid) as views from movies_ratings group by title order by views desc limit 10 ").show()
+
+spark.sql("select title,count(userid) as views,avg(rating) as rating from movies_ratings group by title having views>40 order by rating desc limit 10 ").show()
+
+--------------------AWS S3-----------
+import boto3
+s3client=boto3.resource("s3")
+buckets=s3client.buckets.all()
+for bucket in buckets:
+    print(bucket)
+
+aws configure 
+ .aws 
+     
+readbucket=s3client.Bucket('miriyalamiriyala')
+bucketlist=readbucket.objects.all()
+for object in bucketlist:
+    print(bucketlist.key)
 
