@@ -1,0 +1,240 @@
+   56  hdfs dfs -ls /
+   57  hdfs dfs -mkdir -p .
+   58  hdfs dfs -ls /
+   59  hdfs dfs -ls /user
+  152  hdfs dfs -ls
+  153  hdfs dfs -ls /sqoop
+  154  hdfs dfs -ls /sqoop/information-schema/tables/part-m-00000
+  155  hdfs dfs -cat /sqoop/information-schema/tables/part-m-00000
+  191  hdfs dfs -ls /sqoop/information-schema/tables/part-m-00000
+  192  hdfs dfs -cat /sqoop/information-schema/tables/part-m-00000
+  194  hdfs dfs -cat /sqoop/information-schema/tables/part-m-00000
+  256  hdfs dfs -cat /sqoop/information-schema/tables/part-m-00000
+  257  hdfs dfs -get /sqoop/information-schema/tables/part-m-00000 .
+  458  hdfs dfs -df -h /
+  467  hdfs dfs -ls /
+  468  hdfs dfs -rm -r /sqoop
+  469  hdfs dfs -ls /
+  484  hdfs dfs -cat /sqoop/boundary/kalyan.db/orders/m1/part-m-00001
+  500  hdfs dfs -cat /sqoop/departments/m1/part-m-00000
+  519  hdfs dfs -cat /sqoop/impo/m1/part-m-00000
+  544  hdfs dfs -cat 
+  546  hdfs dfs -cat /sqoop/boundary/kalyan.db/orders/m1
+  547  hdfs dfs -cat /sqoop/boundary/kalyan.db/orders/m1/part-m-00000
+  548  hdfs dfs -cat /sqoop/boundary/kalyan.db/orders/m1/part-m-00003
+  550  hdfs dfs -cat /sqoop/query/kalyan.db/orders/m2/part-m-00001
+  551  hdfs dfs -cat /sqoop/query/kalyan.db/orders/m2/part-m-00000
+  552  hdfs dfs -cat /sqoop/query/kalyan.db/orders/m2/part-m-00001
+  554  hdfs dfs -cat /sqoop/where/kalyan.db/orders/m1/part-m-00000
+  560  hdfs dfs -cat /hive/kalyan/myorders1/part-m-00000
+  561  hdfs dfs -cat /hive/kalyan/myorders1/part-m-00001
+  562  hdfs dfs -cat /hive/kalyan/myorders1/part-m-00002
+  563  hdfs dfs -cat /hive/kalyan/myorders1/part-m-00003
+  564  hdfs dfs -cat /home/orienit/work/warehouse/myorders1/part-m-00000
+  576  hdfs dfs -ls /
+  598  hdfs dfs -ls /
+  599  hdfs dfs -rm -r /sqoop
+  600  hdfs dfs -ls /
+  603  hdfs dfs -ls /sqoop/import-all-data/
+  604  hdfs dfs -ls /sqoop/import-all-data/sqoop.db
+  605  hdfs dfs -ls /sqoop/import-all-data/sqoop.db/pet
+  606  hdfs dfs -cat /sqoop/import-all-data/sqoop.db/pet/part-m-00000
+  611  hdfs dfs -ls /sqoop/import/kalyan.db//m1
+  612  hdfs dfs -ls /sqoop/import/kalyan.db/m1
+  613  hdfs dfs -ls /sqoop/import/
+  614  hdfs dfs -ls /sqoop/import/kalyan.db
+  615  hdfs dfs -ls /sqoop/import/kalyan.db/orders/m1
+  620  hdfs dfs -ls /sqoop/import/kalyan.db/orders/split/
+  621  hdfs dfs -ls /sqoop/import/kalyan.db/orders
+  622  hdfs dfs -ls /sqoop/import/kalyan.db/
+  623  hdfs dfs -ls /sqoop/import/kalyan.db/order/split
+  624  hdfs dfs -ls /sqoop/import/kalyan.db/order/split/m1
+  628  hdfs dfs -ls /sqoop/boundary/kalyan.db/
+  629  hdfs dfs -ls /sqoop/boundary/kalyan.db/orders
+  630  hdfs dfs -ls /sqoop/boundary/kalyan.db/orders/m1
+  659  hdfs dfs -ls /
+  660  hdfs dfs -ls 
+  661  hdfs dfs -mkdir -p .
+  662  hdfs dfs -ls /
+  663  hdfs dfs -ls /user/orienit
+  664  hdfs dfs -ls /user/orienit_sqoop
+  667  hdfs dfs -ls /
+  668  hdfs dfs -mkdir siva 
+  669  hdfs dfs -ls 
+  670  hdfs dfs -touchz siva/file1.txt
+  671  hdfs dfs -ls siva/
+  675  hdfs dfs -appendToFile passwd siva/file.txt
+  676  hdfs dfs -cat siva/file.txt
+  682  hdfs dfs -appendToFile passwd siva/file.txt
+  683  hdfs dfs -cat siva/file.txt
+  684  hdfs dfs -tail siva/file.txt 
+  685  hdfs dfs -test -d siva
+  687  hdfs dfs -test -d siva1
+  689  hdfs dfs -help cat
+  690  hdfs dfs -usage cat
+  691  hdfs dfs -ls 
+  692  hdfs dfs -chmod 777 siva
+  693  hdfs dfs -ls 
+  694  hdfs dfs -ls siva
+  695  hdfs dfs -chmod -R 777 siva
+  696  hdfs dfs -ls siva
+  697  hdfs dfs -chgrp 755 -R siva
+  698  hdfs dfs -chgrp -R siva siva/
+  699  hdfs dfs -ls siva
+  700  hdfs dfs -chown -R orienit:supergroup siva/
+  701  hdfs dfs -ls siva
+  702  hdfs dfs -du -h /
+  703  hdfs dfs -du -h /user
+  704  hdfs dfs -df -h /
+  712  hdfs dfs -put siva.tar.gz siva
+  713  hdfs dfs -ls siva/
+  714  hdfs dfs -text siva/siva.tar.gz
+  715  hdfs dfs -put - siva/a.txt
+  716  hdfs dfs -cat siva/a.txt | hdfs dfs -appendToFile - siva/file.txt
+  717  hdfs dfs -cat siva/file.txt
+  724  hdfs dfs -copyFromLocal hive-site.xml siva
+  725  hdfs dfs -ls siva/
+  726  hdfs dfs -setrep -R 3 siva/
+  727  hdfs dfs -ls siva/
+  728  hdfs dfs -mkdir chanikya
+  729  hdfs dfs -cp siva/hive-site.xml chanikya/
+  730  hdfs dfs -ls chanikya/
+  731  hdfs dfs -mv siva/a.txt chanikya/
+  732  hdfs dfs -ls chanikya/
+  733  hdfs dfs -ls siva/
+  738  hdfs dfs
+  739  hdfs dfs -checksum chanikya/a.txt
+  740  hdfs dfs -appendToFile - chanikya/a.txt 
+  741  hdfs dfs -appendToFile passwd chanikya/a.txt 
+  742  hdfs dfs -checksum chanikya/a.txt
+  743  hdfs dfs -appendToFile hive-site.xml chanikya/a.txt
+  745  hdfs dfs -ls siva/
+  746  hdfs dfs -checksum siva/file.txt 
+  747  hdfs dfs -appendToFile passwd siva/file.txt
+  749  hdfs dfs -help appendToFile
+  750  hdfs dfs -touchz siva/sample
+  751  hdfs dfs -checksum siva/sample
+  752  hdfs dfs -appendToFile passwd siva/sample
+  753  hdfs dfs -checksum siva/sample
+  754  hdfs dfs -appendToFile passwd siva/sample
+  755  hdfs dfs -checksum siva/sample
+  757  hdfs dfs 
+  758  hdfs dfs -count siva
+  759  hdfs dfs -stat siva
+  761  hdfs dfs -get chanikya/a.txt .
+  768  history | grep -i hdfs
+  769  history | grep -i hdfs >hdfs
+
+
+
+
+--------------------------------------------------THEORY---------------------------------------------
+
+design of hdfs :
+---------------
+1)can store large amount of data
+2)write once read many (streaming data access)
+3)low commudity hardware 
+
+Drawbacks:
+--------
+1)low latency data access is not there 
+2)no updtaes only appends 
+3)lot's of small files is the issue 
+
+functionality of hdfs:
+---------------------------
+namenode:store in ram and harddisk 50070,8020
+datandoe :store in harddisk ,50075
+secondarynamenode :store in harddisk 50090 
+
+functionality of hadoop: 
+--------------------------
+1)automatically splitting the file into blocks 
+2)automatically maintaing the replicas 
+3)automatically maintaing the metadata 
+
+Configured capacity:
+----------------------
+1)dfs 
+  a)dfs used
+  b)dfs remaining
+2)nondfs
+
+initially:
+-----------
+fs--->dfs----->hdfs 
+
+a)storing the large amout of data 
+b)processing the data 
+c)data loss 
+   i)power failure 
+   ii)network failure 
+   iii)hardwware failure 
+d)metadata issue  (data about the data)
+  file level or content level
+
+replicas:
+-------
+min: 3
+max:512 
+
+
+underreplicas:distinct of missing blocks is called underreplicas 
+overrepliacs :
+missing blocks:total no of missing blocks 
+
+1)which architecture 
+   master-slave 
+2)what are masters 
+  namenode ,secondarynamenode,resource manager  
+3)what are slave 
+  datanode,node manager
+
+4)for every 3 seconds datanode will communocate with namenode 
+
+5)internal communincation is RPC(remote procedureal call)
+ 
+6)what is data locality?
+where ever data is there execution also will happen on the same system .This helps in improvin the performance of the system .Hadoop always follows datalocality 
+
+7)why block size in hdfs is so large ?
+in order to reduce the metadata size 
+ block size and metadata size both are inversily proportional 
+
+seek time and transfer rate can be increased by increaing the bock size 
+
+os block size is 4kb
+
+hadoop1.x:
+-------------
+HDFS 
+MR 
+
+namenode:
+secondarynamenode:
+datandoe:
+JOBTRACKER:
+TASKTRACKER:
+Hadoop2.x:
+--------
+HDFS     
+MR 
+YARN 
+
+namenode:storing the metadata :50070 ,8020
+datanode:storing the actual data :50075
+secondarynamenode:storing the backup of the namenode metadata but not process backup :50090 
+resourcemanager:assing jobs to nodemanager 50030:8021
+nodemanager:executing the jobs given by RM and result will be sent to RM :50060 
+
+
+
+
+
+
+curl -i "http://<HOST>:<PORT>/webhdfs/v1/<PATH>?[user.name=<USER>&]doas=<USER>&op=..."
+
+curl -i --negotiate -u : "http://<HOST>:<PORT>/webhdfs/v1/<PATH>?doas=<USER>&op=..."
+
+
